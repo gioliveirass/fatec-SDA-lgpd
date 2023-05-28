@@ -4,6 +4,7 @@ import basicMiddleware from "./middlewares/basic.middleware";
 
 import authController from "./app/controllers/auth.controller";
 import userController from "./app/controllers/user.controller";
+import termController from "./app/controllers/term.controller";
 
 class Welcome {
   static getWelcome(req: Request, res: Response) {
@@ -21,5 +22,7 @@ router.post("/auth", authController.login);
 
 router.post("/users", userController.createUser);
 router.put("/users", basicMiddleware, userController.updateUser);
+
+router.post("/terms", basicMiddleware, termController.createTerm);
 
 export default router;
