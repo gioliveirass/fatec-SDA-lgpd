@@ -25,5 +25,6 @@ router.put("/users", basicMiddleware, userController.updateUser);
 
 router.post("/terms", basicMiddleware, termController.createTerm);
 router.post("/terms/accept", basicMiddleware, termController.acceptTerms);
+router.post("/terms/refuse", basicMiddleware, termController.refuseTerms);
 
 export default router;

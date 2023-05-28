@@ -73,3 +73,55 @@ export async function acceptTerms(req: Request, res: Response) {
     );
   }
 }
+
+export async function refuseTerms(req: Request, res: Response) {
+  const userRepository = AppDataSource.getRepository(User);
+  const queryRunner = AppDataSource.createQueryRunner();
+
+  const id = req.body.userId;
+  const terms = req.body.terms;
+
+  try {
+    const userExist = await userRepository.findOne({
+      where: { id },
+      relations: { acceptedTerms: true },
+    });
+
+    if (!userExist)
+      return responseWithStatus("Usuário não foi encontrado.", 404);
+
+    await queryRunner.startTransaction();
+
+    terms.forEach((term: Term) => {
+      userExist.acceptedTerms = userExist.acceptedTerms.filter(
+        (acceptedTerm) => {
+          return acceptedTerm.id !== term.id;
+        }
+      );
+    });
+
+    await queryRunner.manager.save(User, userExist);
+
+    const logTermAcceptance = terms.reduce((prev: any, term: any) => {
+      return [...prev, { user: userExist, term: term, accept: false }];
+    }, []);
+
+    await queryRunner.manager
+      .createQueryBuilder()
+      .insert()
+      .into(LogTermAcceptance)
+      .values(logTermAcceptance)
+      .execute();
+
+    await queryRunner.commitTransaction();
+    await queryRunner.release();
+
+    return responseWithStatus("Termos atualizados com sucesso.", 200);
+  } catch (err) {
+    logError(req, err);
+    return responseWithStatus(
+      "Ocorreu um erro no servidor, tente novamente mais tarde",
+      500
+    );
+  }
+}

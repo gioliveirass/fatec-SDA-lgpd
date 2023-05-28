@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createTerm, acceptTerms } from "../services/term.service";
+import { createTerm, acceptTerms, refuseTerms } from "../services/term.service";
 
 class TermController {
   async createTerm(req: Request, res: Response) {
@@ -9,6 +9,11 @@ class TermController {
 
   async acceptTerms(req: Request, res: Response) {
     const response = await acceptTerms(req, res);
+    return res.status(response.status).json(response.message);
+  }
+
+  async refuseTerms(req: Request, res: Response) {
+    const response = await refuseTerms(req, res);
     return res.status(response.status).json(response.message);
   }
 }
