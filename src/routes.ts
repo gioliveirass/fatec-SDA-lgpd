@@ -1,4 +1,5 @@
 import express, { Request, Response, Router } from "express";
+import authController from "./app/controllers/auth.controller";
 import userController from "./app/controllers/user.controller";
 
 class Welcome {
@@ -12,6 +13,8 @@ const router = Router();
 router.use(express.urlencoded({ extended: true }));
 
 router.get("/", Welcome.getWelcome);
+
+router.post("/auth", authController.login);
 
 router.post("/users", userController.createUser);
 

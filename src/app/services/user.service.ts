@@ -17,21 +17,19 @@ export async function createUser(req: Request, res: Response) {
     const saltOrRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltOrRounds);
 
-    if (!userExists) {
-      const user = userRepository.create({
-        name,
-        email,
-        cellphone,
-        passwordHash,
-        acceptedTerms,
-      });
+    if (userExists) return responseWithStatus({ userExists }, 200);
 
-      await userRepository.save(user);
+    const user = userRepository.create({
+      name,
+      email,
+      cellphone,
+      passwordHash,
+      acceptedTerms,
+    });
 
-      return responseWithStatus({ user }, 201);
-    } else {
-      return responseWithStatus({ userExists }, 200);
-    }
+    await userRepository.save(user);
+
+    return responseWithStatus({ user }, 201);
   } catch (err) {
     logError(req, err);
     return responseWithStatus(
