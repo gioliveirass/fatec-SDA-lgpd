@@ -1,4 +1,7 @@
 import express, { Request, Response, Router } from "express";
+
+import basicMiddleware from "./middlewares/basic.middleware";
+
 import authController from "./app/controllers/auth.controller";
 import userController from "./app/controllers/user.controller";
 
@@ -17,5 +20,6 @@ router.get("/", Welcome.getWelcome);
 router.post("/auth", authController.login);
 
 router.post("/users", userController.createUser);
+router.put("/users", basicMiddleware, userController.updateUser);
 
 export default router;
