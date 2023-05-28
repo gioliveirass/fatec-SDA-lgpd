@@ -27,7 +27,6 @@ export class Term {
   description: string;
 
   @ManyToMany(() => User, (user) => user.acceptedTerms)
-  @JoinTable()
   usersWhoAccepted: User[];
 
   constructor() {

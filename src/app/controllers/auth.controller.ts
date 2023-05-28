@@ -3,8 +3,8 @@ import { login } from "../services/auth.service";
 
 class AuthController {
   async login(req: Request, res: Response) {
-    const findResponse = await login(req, res);
-    return res.status(findResponse.status).json(findResponse.message);
+    const response = await login(req, res);
+    return res.status(response.status).json(response.message);
   }
 }
 
