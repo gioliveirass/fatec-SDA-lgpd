@@ -25,7 +25,6 @@ export async function createUser(req: Request, res: Response) {
       email,
       cellphone,
       passwordHash,
-      acceptedTerms,
     });
 
     await userRepository.save(user);
@@ -71,20 +70,14 @@ export async function updateUser(req: Request, res: Response) {
       .values([
         {
           attribute: "name",
-          newValue: name,
-          oldValue: userExist.name,
           user: userExist,
         },
         {
           attribute: "email",
-          newValue: email,
-          oldValue: userExist.email,
           user: userExist,
         },
         {
           attribute: "cellphone",
-          newValue: cellphone,
-          oldValue: userExist.cellphone,
           user: userExist,
         },
       ])
@@ -94,6 +87,28 @@ export async function updateUser(req: Request, res: Response) {
     await queryRunner.release();
 
     return responseWithStatus(userUpdated.raw[0], 200);
+  } catch (err) {
+    logError(req, err);
+    return responseWithStatus(
+      "Ocorreu um erro no servidor, tente novamente mais tarde",
+      500
+    );
+  }
+}
+
+export async function findUser(req: Request, res: Response) {
+  const userRepository = AppDataSource.getRepository(User);
+  const { id } = req.params;
+
+  try {
+    const user = await userRepository.findOne({
+      where: { id },
+      relations: { acceptedPermissions: true },
+    });
+
+    if (!user) return responseWithStatus("Usuário não foi encontrado.", 404);
+
+    return responseWithStatus({ user }, 200);
   } catch (err) {
     logError(req, err);
     return responseWithStatus(

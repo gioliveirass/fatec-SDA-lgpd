@@ -1,11 +1,10 @@
 import { v4 as uuid } from "uuid";
-import { User } from "./user.entity";
+import { Permission } from "./permission.entity";
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToMany,
-  JoinTable,
+  OneToMany,
   CreateDateColumn,
 } from "typeorm";
 
@@ -26,8 +25,11 @@ export class Term {
   @Column()
   description: string;
 
-  @ManyToMany(() => User, (user) => user.acceptedTerms)
-  usersWhoAccepted: User[];
+  @Column()
+  version: string;
+
+  @OneToMany(() => Permission, (permission) => permission.term)
+  permissionsIncluded: Permission[];
 
   constructor() {
     if (!this.id) {

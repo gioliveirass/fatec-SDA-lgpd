@@ -4,18 +4,18 @@ import responseWithStatus from "../utils/responseWithStatus.util";
 import { Request, Response } from "express";
 import { AppDataSource } from "../../data-source";
 import { Term } from "../entities/term.entity";
-import { User } from "../entities/user.entity";
-import { LogTermAcceptance } from "../entities/logTermAcceptance.entity";
 
 export async function createTerm(req: Request, res: Response) {
   const termRepository = AppDataSource.getRepository(Term);
 
-  const { title, description } = req.body;
+  const { title, description, version, permissionsIncluded } = req.body;
 
   try {
     const term = termRepository.create({
       title,
       description,
+      version,
+      permissionsIncluded,
     });
 
     await termRepository.save(term);
@@ -30,41 +30,22 @@ export async function createTerm(req: Request, res: Response) {
   }
 }
 
-export async function acceptTerms(req: Request, res: Response) {
-  const userRepository = AppDataSource.getRepository(User);
-  const queryRunner = AppDataSource.createQueryRunner();
+export async function findTerm(req: Request, res: Response) {
+  const termRepository = AppDataSource.getRepository(Term);
 
-  const id = req.body.userId;
-  const terms = req.body.terms;
+  const { id } = req.params;
 
   try {
-    const userExist = await userRepository.findOne({
+    const term = await termRepository.findOne({
       where: { id },
+      relations: {
+        permissionsIncluded: true,
+      },
     });
 
-    if (!userExist)
-      return responseWithStatus("Usuário não foi encontrado.", 404);
+    if (!term) return responseWithStatus("Termo não encontrado", 404);
 
-    await queryRunner.startTransaction();
-
-    userExist.acceptedTerms = terms;
-    await queryRunner.manager.save(User, userExist);
-
-    const logTermAcceptance = terms.reduce((prev: any, term: any) => {
-      return [...prev, { user: userExist, term: term, accept: true }];
-    }, []);
-
-    await queryRunner.manager
-      .createQueryBuilder()
-      .insert()
-      .into(LogTermAcceptance)
-      .values(logTermAcceptance)
-      .execute();
-
-    await queryRunner.commitTransaction();
-    await queryRunner.release();
-
-    return responseWithStatus("Termos atualizados com sucesso.", 200);
+    return responseWithStatus({ term }, 201);
   } catch (err) {
     logError(req, err);
     return responseWithStatus(
@@ -74,49 +55,19 @@ export async function acceptTerms(req: Request, res: Response) {
   }
 }
 
-export async function refuseTerms(req: Request, res: Response) {
-  const userRepository = AppDataSource.getRepository(User);
-  const queryRunner = AppDataSource.createQueryRunner();
-
-  const id = req.body.userId;
-  const terms = req.body.terms;
+export async function listTerms(req: Request, res: Response) {
+  const termRepository = AppDataSource.getRepository(Term);
 
   try {
-    const userExist = await userRepository.findOne({
-      where: { id },
-      relations: { acceptedTerms: true },
+    const terms = await termRepository.find({
+      relations: {
+        permissionsIncluded: true,
+      },
     });
 
-    if (!userExist)
-      return responseWithStatus("Usuário não foi encontrado.", 404);
+    if (!terms) return responseWithStatus("Nenhum termo encontrado", 404);
 
-    await queryRunner.startTransaction();
-
-    terms.forEach((term: Term) => {
-      userExist.acceptedTerms = userExist.acceptedTerms.filter(
-        (acceptedTerm) => {
-          return acceptedTerm.id !== term.id;
-        }
-      );
-    });
-
-    await queryRunner.manager.save(User, userExist);
-
-    const logTermAcceptance = terms.reduce((prev: any, term: any) => {
-      return [...prev, { user: userExist, term: term, accept: false }];
-    }, []);
-
-    await queryRunner.manager
-      .createQueryBuilder()
-      .insert()
-      .into(LogTermAcceptance)
-      .values(logTermAcceptance)
-      .execute();
-
-    await queryRunner.commitTransaction();
-    await queryRunner.release();
-
-    return responseWithStatus("Termos atualizados com sucesso.", 200);
+    return responseWithStatus({ terms }, 201);
   } catch (err) {
     logError(req, err);
     return responseWithStatus(

@@ -5,12 +5,13 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
+  ManyToMany,
   CreateDateColumn,
   ManyToOne,
 } from "typeorm";
 
-@Entity("logTermAcceptance")
-export class LogTermAcceptance {
+@Entity("permission")
+export class Permission {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -18,16 +19,19 @@ export class LogTermAcceptance {
     type: "timestamp",
     default: () => "CURRENT_TIMESTAMP(6)",
   })
-  date: Date;
-
-  @ManyToOne(() => User)
-  user: User;
-
-  @ManyToOne(() => Term)
-  term: Term;
+  createdAt: Date;
 
   @Column()
-  accept: boolean;
+  title: string;
+
+  @Column()
+  description: string;
+
+  @ManyToMany(() => User, (user) => user.acceptedPermissions)
+  usersWhoAccepted: User[];
+
+  @ManyToOne(() => Term, (term) => term.permissionsIncluded)
+  term: Term;
 
   constructor() {
     if (!this.id) {

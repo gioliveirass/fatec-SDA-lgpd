@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { Term } from "./term.entity";
+import { Permission } from "./permission.entity";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -32,9 +32,9 @@ export class User {
   @Column()
   passwordHash: string;
 
-  @ManyToMany(() => Term, (term) => term.usersWhoAccepted)
+  @ManyToMany(() => Permission, (permission) => permission.usersWhoAccepted)
   @JoinTable()
-  acceptedTerms: Term[];
+  acceptedPermissions: Permission[];
 
   constructor() {
     if (!this.id) {

@@ -1,5 +1,7 @@
 import { v4 as uuid } from "uuid";
 import { User } from "./user.entity";
+import { Term } from "./term.entity";
+import { Permission } from "./permission.entity";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,8 +10,8 @@ import {
   ManyToOne,
 } from "typeorm";
 
-@Entity("logUserUpdate")
-export class LogUserUpdate {
+@Entity("logPermissionAcceptance")
+export class LogPermissionAcceptance {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -19,11 +21,20 @@ export class LogUserUpdate {
   })
   date: Date;
 
-  @Column()
-  attribute: string;
-
   @ManyToOne(() => User)
   user: User;
+
+  @ManyToOne(() => Term)
+  term: Term;
+
+  @Column()
+  termVersion: string;
+
+  @ManyToOne(() => Permission)
+  permission: Permission;
+
+  @Column()
+  accept: boolean;
 
   constructor() {
     if (!this.id) {
