@@ -36,7 +36,7 @@ yarn dev
 
 Abaixo há um resumo das rotas disponíveis na aplicação.
 
-Caso deseje, as requisições prontas para serem importadas no [Insomnia]("https://insomnia.rest/download") estão disponíveis [aqui]("https://github.com/gioliveirass/fatec-SDA-lgpd/blob/main/github/requests").
+Caso deseje, as requisições prontas para serem importadas no [Insomnia](https://insomnia.rest/download) estão disponíveis [aqui](https://github.com/gioliveirass/fatec-SDA-lgpd/blob/main/github/requests).
 
 <table>
   <tr>
