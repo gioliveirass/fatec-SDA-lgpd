@@ -34,4 +34,65 @@ yarn dev
 
 ## ✨ Rotas disponíveis
 
-Em construção...
+<table>
+  <tr>
+    <th>Rota</th>
+    <th>Para que serve</th>
+    <th>Exemplo de payload</th>
+  </tr>
+  <tr>
+    <td><img src="https://badgen.net/badge/POST/auth/2e7d32" /></td>
+    <td>Autenticar no sistema</td>
+    <td><img src="./github/get_auth.PNG" /></td>
+  </tr>
+  <tr>
+    <td><img src="https://badgen.net/badge/POST/users/2e7d32" /></td>
+    <td>Cadastrar usuário no sistema</td>
+    <td><img src="./github/post_users.PNG" /></td>
+  </tr>
+  <tr>
+    <td><img src="https://badgen.net/badge/GET/users/9c27b0" /></td>
+    <td>Buscar por um usuário cadastrado</td>
+    <td>Enviar ID do usuário na URL (users/:id)</td>
+  </tr>
+  <tr>
+    <td><img src="https://badgen.net/badge/PUT/users/ed6c02" /></td>
+    <td>Atualizar informações de um usuário</td>
+    <td><img src="./github/put_users.PNG" /></td>
+  </tr>
+  <tr>
+    <td><img src="https://badgen.net/badge/POST/terms/2e7d32" /></td>
+    <td>Registrar um novo termo</td>
+    <td><img src="./github/post_terms.PNG" /></td>
+  </tr>
+  <tr>
+    <td><img src="https://badgen.net/badge/GET/terms/9c27b0" /></td>
+    <td>Buscar por um termo cadastrado</td>
+    <td>Enviar ID do termo na URL (terms/:id)</td>
+  </tr>
+  <tr>
+    <td><img src="https://badgen.net/badge/GET/terms/9c27b0" /></td>
+    <td>Buscar por todos os termos cadastrados</td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td><img src="https://badgen.net/badge/GET/permission/9c27b0" /></td>
+    <td>Buscar por uma permissão cadastrada</td>
+    <td>Enviar ID da permissão na URL (permission/:id)</td>
+  </tr>
+  <tr>
+    <td><img src="https://badgen.net/badge/POST/permission/2e7d32" /></td>
+    <td>Cadastrar uma nova permissão</td>
+    <td><img src="./github/post_permission.PNG" /></td>
+  </tr>
+  <tr>
+    <td><img src="https://badgen.net/badge/PUT/permission_accept/ed6c02" /></td>
+    <td>Aceitar uma permissão existente</td>
+    <td><img src="./github/put_permission.PNG" /></td>
+  </tr>
+  <tr>
+    <td><img src="https://badgen.net/badge/PUT/permission_refuse/ed6c02" /></td>
+    <td>Recusar uma permissão existente</td>
+    <td><img src="./github/put_permission.PNG" /></td>
+  </tr>
+</table>
