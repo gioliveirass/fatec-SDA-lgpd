@@ -4,8 +4,26 @@ O presente repositório contém o código do back-end com aplicação de regras 
 
 Selecione uma opção abaixo para saber mais:
 
+- [Dependências;](#dependencias)
 - [Como executar o projeto localmente;](#execucao_local)
 - [Rotas disponíveis.](#rotas)
+
+<span id="dependenciasl">
+
+## ✨ Dependências
+
+<img 
+  alt="Docker" 
+  src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white"
+/>
+<img 
+  alt="Node" 
+  src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"
+/>
+<img 
+  alt="Yarn" 
+  src="https://img.shields.io/badge/Yarn-2C8EBB?style=for-the-badge&logo=yarn&logoColor=white"
+/>
 
 <span id="execucao_local">
 
@@ -21,13 +39,16 @@ git clone https://github.com/gioliveirass/fatec-SDA-lgpd.git
 cd fatec-SDA-lgpd
 yarn
 
-# Duplique o arquivo .env.config, renomeie para .env e preencha com as informações necessárias
+# Crie um container para o banco de dados postgres
+docker-compose up -d
+
+# Duplique o arquivo .env.config, renomeie para .env e preencha com as informações corretas
 
 # Utilize o comando do TypeORM para dar o run da migration e sincronizar as entidades
 yarn typeorm migration:run -d ./src/data-source.ts
 
 # Inicie o Projeto
-yarn dev
+yarn start
 ```
 
 <span id="rotas">

@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  fatec-lgpd-postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "Lgpd2023!"
+    ports:
+      - "15432:5432"
+    networks:
+      - fatec-lgpd-network
+
+  fatec-lgpd-pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "lgpd@email.com"
+      PGADMIN_DEFAULT_PASSWORD: "Lgpd2023!"
+    ports:
+      - "16543:80"
+    depends_on:
+      - fatec-lgpd-postgres
+    networks:
+      - fatec-lgpd-network
+
+networks:
+  fatec-lgpd-network:
+    driver: bridge
