@@ -13,9 +13,12 @@ export default function logError(req: Request, err: unknown) {
   });
 
   console.log(`
-    ==================================================================
-    Data/Hora do erro: ${date} - ${hour} - ${urlRoute}\n
-    ${err}
-    ==================================================================
+      ==================================================================
+      == ERRO IDENTIFICADO
+      ================================================================== \n
+      - Data/Hora do erro: ${date} - ${hour} \n
+      - Rota: ${urlRoute} \n
+      - Descrição do erro:
+      ${err}
   `);
 }

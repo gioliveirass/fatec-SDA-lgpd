@@ -6,6 +6,7 @@ import { AppDataSource } from "../../data-source";
 import { Permission } from "../entities/permission.entity";
 import { User } from "../entities/user.entity";
 import { LogPermissionAcceptance } from "../entities/logPermissionAcceptance.entity";
+import { logSucess_permissionAcceptance } from "../utils/logSuccess.util";
 
 export async function findPermission(req: Request, res: Response) {
   const permissionRepository = AppDataSource.getRepository(Permission);
@@ -87,7 +88,7 @@ export async function acceptPermission(req: Request, res: Response) {
 
     await queryRunner.manager.save(User, userExist);
 
-    await queryRunner.manager
+    const logSucess = await queryRunner.manager
       .createQueryBuilder()
       .insert()
       .into(LogPermissionAcceptance)
@@ -98,10 +99,13 @@ export async function acceptPermission(req: Request, res: Response) {
         accept: true,
         termVersion: permissionExist.term.version,
       })
+      .returning("*")
       .execute();
 
     await queryRunner.commitTransaction();
     await queryRunner.release();
+
+    logSucess_permissionAcceptance(req, logSucess.raw[0]);
 
     return responseWithStatus(
       `Permissão ${permissionExist.id} aceita pelo usuário ${userExist.id} com sucesso.`,
@@ -149,10 +153,9 @@ export async function refusePermission(req: Request, res: Response) {
     userExist.acceptedPermissions = allAcceptedPermissions;
 
     await queryRunner.startTransaction();
-
     await queryRunner.manager.save(User, userExist);
 
-    await queryRunner.manager
+    const logSucess = await queryRunner.manager
       .createQueryBuilder()
       .insert()
       .into(LogPermissionAcceptance)
@@ -163,10 +166,13 @@ export async function refusePermission(req: Request, res: Response) {
         accept: false,
         termVersion: permissionExist.term.version,
       })
+      .returning("*")
       .execute();
 
     await queryRunner.commitTransaction();
     await queryRunner.release();
+
+    logSucess_permissionAcceptance(req, logSucess.raw[0]);
 
     return responseWithStatus(
       `Permissão ${permissionExist.id} recusada pelo usuário ${userExist.id} com sucesso.`,

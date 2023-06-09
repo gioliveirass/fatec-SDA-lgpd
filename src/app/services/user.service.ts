@@ -7,11 +7,13 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../../data-source";
 import { User } from "../entities/user.entity";
 import { LogUserUpdate } from "../entities/logUserUpdate.entity";
+import verifiyUpdatedAttributes from "../utils/verifiyUpdatedAttributes.util";
+import { logSucess_userUpdate } from "../utils/logSuccess.util";
 
 export async function createUser(req: Request, res: Response) {
   const userRepository = AppDataSource.getRepository(User);
 
-  const { name, email, cellphone, password, acceptedTerms } = req.body;
+  const { name, email, cellphone, password } = req.body;
 
   try {
     const userExists = await userRepository.findOne({ where: { email } });
@@ -53,6 +55,12 @@ export async function updateUser(req: Request, res: Response) {
     if (!userExist)
       return responseWithStatus("Usuário não foi encontrado.", 404);
 
+    const updatedAtributtes = verifiyUpdatedAttributes(userExist, {
+      name,
+      email,
+      cellphone,
+    });
+
     await queryRunner.startTransaction();
 
     const userUpdated = await queryRunner.manager
@@ -63,25 +71,25 @@ export async function updateUser(req: Request, res: Response) {
       .returning("*")
       .execute();
 
-    await queryRunner.manager
+    const logsToCreate = updatedAtributtes.map((attribute) => {
+      return {
+        attribute,
+        user: userExist,
+      };
+    });
+
+    const createdLogs = await queryRunner.manager
       .createQueryBuilder()
       .insert()
       .into(LogUserUpdate)
-      .values([
-        {
-          attribute: "name",
-          user: userExist,
-        },
-        {
-          attribute: "email",
-          user: userExist,
-        },
-        {
-          attribute: "cellphone",
-          user: userExist,
-        },
-      ])
+      .values(logsToCreate)
+      .returning("*")
       .execute();
+
+    createdLogs.raw &&
+      createdLogs.raw.forEach((log: any) => {
+        logSucess_userUpdate(req, log);
+      });
 
     await queryRunner.commitTransaction();
     await queryRunner.release();
